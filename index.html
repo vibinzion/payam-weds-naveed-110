@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syeda Payam Batool & Syed Naveed Shoukat — Wedding Invitation</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;800&family=Montserrat:wght@200;300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+    <!-- Font Awesome for luxury icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Subtle Golden Sparkle Canvas Background -->
+    <canvas id="ambient-canvas"></canvas>
+
+    <!-- Hidden YouTube Audio Player -->
+    <div id="yt-player-container" style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden;">
+        <div id="yt-audio-player"></div>
+    </div>
+
+    <!-- Floating Music Toggle Controller -->
+    <div class="floating-music-wrap" id="musicToggleBtn" title="Play / Pause Wedding Music">
+        <div class="music-disc-pulse"></div>
+        <div class="music-btn-inner">
+            <i class="fa-solid fa-music music-icon" id="musicIcon"></i>
+            <div class="equalizer-bars" id="equalizerBars">
+                <span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+        <span class="music-pill-label" id="musicPillLabel">Play Music</span>
+    </div>
+
+    <!-- Main Navigation / Top Monogram Bar -->
+    <header class="top-nav-bar">
+        <div class="brand-monogram">
+            <span class="monogram-initial">P</span>
+            <span class="monogram-amp">&</span>
+            <span class="monogram-initial">N</span>
+        </div>
+        <nav class="nav-links">
+            <a href="#hero">Invitation</a>
+            <a href="#countdown">Countdown</a>
+            <a href="#events">The Events</a>
+            <a href="#gallery">Moments</a>
+        </nav>
+    </header>
+
+    <!-- HERO SECTION (Featuring Custom Royal Attire Imagery) -->
+    <section class="hero-section" id="hero">
+        <div class="hero-bg-overlay"></div>
+        <div class="hero-content fade-in-up">
+            
+            <!-- Islamic Bismillah Calligraphy Header -->
+            <div class="bismillah-wrap">
+                <p class="arabic-calligraphy">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+                <div class="ornate-divider">
+                    <span class="diamond"></span>
+                    <span class="line"></span>
+                    <i class="fa-solid fa-star-and-crescent divider-icon"></i>
+                    <span class="line"></span>
+                    <span class="diamond"></span>
+                </div>
+                <p class="bismillah-trans">In the name of Allah, the Most Beneficent, the Most Merciful</p>
+            </div>
+
+            <p class="invitation-lead">Together with their beloved families</p>
+            
+            <!-- Couple's Names with Royal Typography -->
+            <div class="couple-names-wrap">
+                <h1 class="bride-name gold-shimmer-text">Syeda Payam Batool Naqvi</h1>
+                <div class="names-connector">
+                    <span class="connector-line"></span>
+                    <span class="connector-amp">&</span>
+                    <span class="connector-line"></span>
+                </div>
+                <h1 class="groom-name gold-shimmer-text">Syed Naveed Shoukat Zaidi</h1>
+            </div>
+
+            <p class="invitation-subtext">
+                cordially request the honor of your gracious presence and prayers<br>
+                as we celebrate the sacred union of marriage
+            </p>
+
+            <!-- Scratch to Reveal Date Card -->
+            <div class="scratch-card-container">
+                <div class="scratch-badge">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Interactive Reveal
+                </div>
+                <p class="scratch-instruction">Scratch the gold card below to unveil our wedding date</p>
+                
+                <div class="scratch-box" id="scratchBox">
+                    <!-- Revealed content underneath -->
+                    <div class="scratch-reveal-content">
+                        <div class="reveal-inner">
+                            <span class="reveal-eyebrow">SAVE OUR DATE</span>
+                            <h2 class="reveal-date">FRIDAY, 20 NOVEMBER 2026</h2>
+                            <p class="reveal-details">Lahore, Pakistan · 06:30 PM</p>
+                            <div class="reveal-sparkles">
+                                <i class="fa-solid fa-ring"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Scratching canvas layer on top -->
+                    <canvas id="scratchCanvas"></canvas>
+                </div>
+                <button class="auto-reveal-btn" id="revealAllBtn">
+                    <i class="fa-solid fa-sparkles"></i> Reveal Date
+                </button>
+            </div>
+
+            <a href="#events" class="scroll-down-indicator" aria-label="Scroll to events">
+                <span>View Celebrations</span>
+                <i class="fa-solid fa-chevron-down bounce"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- LIVE COUNTDOWN SECTION -->
+    <section class="countdown-section section-padding" id="countdown">
+        <div class="section-container text-center">
+            <div class="section-header fade-in-up">
+                <span class="gold-badge">ANTICIPATING ETERNITY</span>
+                <h2 class="section-title">Counting Down To Forever</h2>
+                <div class="ornate-divider">
+                    <span class="line"></span>
+                    <i class="fa-solid fa-gem divider-icon"></i>
+                    <span class="line"></span>
+                </div>
+                <p class="section-subtitle">Until we begin our journey together in the grace and blessings of Allah</p>
+            </div>
+
+            <div class="countdown-grid fade-in-up" id="countdownGrid">
+                <div class="countdown-card">
+                    <div class="countdown-circle">
+                        <span class="countdown-number" id="days">00</span>
+                    </div>
+                    <span class="countdown-label">Days</span>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-card">
+                    <div class="countdown-circle">
+                        <span class="countdown-number" id="hours">00</span>
+                    </div>
+                    <span class="countdown-label">Hours</span>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-card">
+                    <div class="countdown-circle">
+                        <span class="countdown-number" id="minutes">00</span>
+                    </div>
+                    <span class="countdown-label">Minutes</span>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-card">
+                    <div class="countdown-circle">
+                        <span class="countdown-number" id="seconds">00</span>
+                    </div>
+                    <span class="countdown-label">Seconds</span>
+                </div>
+            </div>
+
+            <p class="target-date-echo fade-in-up">
+                <i class="fa-regular fa-calendar-check"></i> Friday, 20 November 2026 · 06:30 PM (PKT)
+            </p>
+        </div>
+    </section>
+
+    <!-- EVENTS TIMELINE SECTION (WITH PARTICIPANTS & FAMILY ROLLS) -->
+    <section class="events-section section-padding" id="events">
+        <div class="section-container">
+            <div class="section-header text-center fade-in-up">
+                <span class="gold-badge">CELEBRATION ITINERARY</span>
+                <h2 class="section-title">The Wedding Festivities</h2>
+                <div class="ornate-divider">
+                    <span class="line"></span>
+                    <i class="fa-solid fa-crown divider-icon"></i>
+                    <span class="line"></span>
+                </div>
+                <p class="section-subtitle">We would be delighted by your gracious company at each sacred milestone</p>
+            </div>
+
+            <div class="events-timeline">
+                
+                <!-- EVENT 1: Rasam e Mayon & Majlis e Aza -->
+                <div class="event-card-wrapper fade-in-up">
+                    <div class="event-card-arch">
+                        
+                        <!-- Event Image Header -->
+                        <div class="event-image-banner">
+                            <img src="images/bride-mayon.jpg" alt="Rasam e Mayon & Majlis e Aza" loading="lazy">
+                            <div class="event-image-overlay"></div>
+                            <div class="arch-top-ornament">
+                                <i class="fa-solid fa-moon"></i>
+                            </div>
+                        </div>
+
+                        <div class="event-header">
+                            <span class="event-ordinal">01 · BLESSING & TRADITION</span>
+                            <h3 class="event-name">Rasam e Mayon &<br>Majlis e Aza</h3>
+                        </div>
+
+                        <div class="event-meta-list">
+                            <div class="meta-item">
+                                <div class="meta-icon"><i class="fa-regular fa-calendar-days"></i></div>
+                                <div class="meta-content">
+                                    <span class="meta-label">Date</span>
+                                    <span class="meta-value">Tuesday, 17 November 2026</span>
+                                </div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-icon"><i class="fa-regular fa-clock"></i></div>
+                                <div class="meta-content">
+                                    <span class="meta-label">Time</span>
+                                    <span class="meta-value">02:00 PM Afternoon</span>
+                                </div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-icon"><i class="fa-solid fa-location-dot"></i></div>
+                                <div class="meta-content">
+                                    <span class="meta-label">Venue</span>
+                                    <span class="meta-value">House # 175/A, LDA Avenue-1, Raiwind Road, Lahore</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PARTICIPANTS & PROGRAM DETAILS -->
+                        <div class="participants-block">
+                            
+                            <!-- Hosts -->
+                            <div class="participant-group">
+                                <span class="group-label"><i class="fa-solid fa-gem"></i> Hosts</span>
+                                <p class="group-names highlight-names">
+                                    Syeda Ghazala Yawar Naqvi, Falak Saad Zaidi & Fajar Saad Zaidi
+                                </p>
+                            </div>
+
+                            <!-- Talawat Hadees-E-Kissa -->
+                            <div class="participant-group">
+                                <span class="group-label"><i class="fa-solid fa-book-quran"></i> Talawat Hadees-E-Kissa</span>
+                                <p class="group-names">Syeda Gul - E - Zehra Naqvi</p>
+                            </div>
+
+                            <!-- Manqabat -->
+                            <div class="participant-group">
+                                <span class="group-label"><i class="fa-solid fa-feather"></i> Manqabat</span>
+                                <div class="flowing-names-list">
+                                    <span>Hiba Naqvi & Konain Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Ramla Shamsi & Kareena Shamsi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Hijab Faizan</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Pakeeza Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Naba Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Batool Rizvi & Eman Rizvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Massoona Farman</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Raiha Naqvi & Hamail Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Bisma Naqvi</span>
+                                </div>
+                            </div>
+
+                            <!-- Soz O Salam -->
+                            <div class="participant-group">
+                                <span class="group-label"><i class="fa-solid fa-hand-holding-heart"></i> Soz O Salam</span>
+                                <p class="group-names">Farzana Zeren - Farhana Zeren & Nosheen Zahra</p>
+                            </div>
+
+                            <!-- Khitabat -->
+                            <div class="participant-group">
+                                <span class="group-label"><i class="fa-solid fa-microphone-lines"></i> Khitabat</span>
+                                <p class="group-names highlight-names">Syeda Saba Imran Naqvi</p>
+                            </div>
+
+                            <!-- Ikhtatami Dua -->
+                            <div class="participant-group">
+                                <span class="group-label"><i class="fa-solid fa-hands-praying"></i> Ikhtatami Dua</span>
+                                <p class="group-names">Syeda Gul - E - Zehra Naqvi</p>
+                            </div>
+
+                            <!-- Looking Forward -->
+                            <div class="participant-group looking-forward-subgroup">
+                                <span class="group-label"><i class="fa-solid fa-heart"></i> Looking Forward</span>
+                                <div class="flowing-names-list">
+                                    <span>Perveen Sultan Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Perveen Tusadduq Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Zahida Alamdar Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Sadaf Irfan Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Netasha Raza</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="event-action">
+                            <a href="https://maps.google.com/?q=House+175+A+LDA+Avenue+1+Raiwind+Road+Lahore" target="_blank" rel="noopener noreferrer" class="gold-outline-btn">
+                                <i class="fa-solid fa-diamond-turn-right"></i> View Location Map
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EVENT 2: Mehndi Night -->
+                <div class="event-card-wrapper fade-in-up">
+                    <div class="event-card-arch featured-arch">
+                        
+                        <!-- Event Image Banner -->
+                        <div class="event-image-banner">
+                            <img src="images/groom-emerald-mehndi.jpg" alt="Mehndi Night" loading="lazy">
+                            <div class="event-image-overlay"></div>
+                            <div class="arch-top-ornament">
+                                <i class="fa-solid fa-hands-holding"></i>
+                            </div>
+                        </div>
+
+                        <div class="event-header">
+                            <span class="event-ordinal">02 · NIGHT OF COLORS & HENNA</span>
+                            <h3 class="event-name">Mehndi Night</h3>
+                        </div>
+
+                        <div class="event-meta-list">
+                            <div class="meta-item">
+                                <div class="meta-icon"><i class="fa-regular fa-calendar-days"></i></div>
+                                <div class="meta-content">
+                                    <span class="meta-label">Date</span>
+                                    <span class="meta-value">Thursday, 19 November 2026</span>
+                                </div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-icon"><i class="fa-regular fa-clock"></i></div>
+                                <div class="meta-content">
+                                    <span class="meta-label">Time</span>
+                                    <span class="meta-value">06:00 PM Evening</span>
+                                </div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-icon"><i class="fa-solid fa-location-dot"></i></div>
+                                <div class="meta-content">
+                                    <span class="meta-label">Venue</span>
+                                    <span class="meta-value">De Flores Marquee, Plot # 417- 422, Behind LDA Sports Complex, Johar Town, Lahore</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAMILY & FRIENDS (MEHNDI) -->
+                        <div class="participants-block">
+                            <div class="participant-group">
+                                <span class="group-label"><i class="fa-solid fa-sparkles"></i> Family & Friends</span>
+                                <div class="flowing-names-list friends-cloud">
+                                    <span>Raiha Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Hamail Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Kubra Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Rida Mazari</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Bisma Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Saveza Akmal</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Abeeha Amjad</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Ramla Shamsi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Harmeen Irfan</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Kareena Shamsi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Shifa Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Anshra Zaidi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Hiba Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Konain Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Yashfa Zehra</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Merab Zehra</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Fadak Zahra</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Rutba Batool</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Hijab Mazari</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Zaima Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Farzeen Hasan</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Sonia & Samreen</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="event-action">
+                            <a href="https://maps.google.com/?q=De+Flores+Marquee+Johar+Town+Lahore" target="_blank" rel="noopener noreferrer" class="gold-solid-btn">
+                                <i class="fa-solid fa-diamond-turn-right"></i> View Location Map
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EVENT 3: Shaleema (Reception of Barat & Rukhsati) -->
+                <div class="event-card-wrapper fade-in-up">
+                    <div class="event-card-arch royal-highlight">
+                        <div class="grand-badge">GRAND AUSPICIOUS OCCASION</div>
+                        
+                        <!-- Event Image Banner -->
+                        <div class="event-image-banner">
+                            <img src="images/bride-shaleema-velvet.jpg" alt="Shaleema Barat & Rukhsati" loading="lazy">
+                            <div class="event-image-overlay"></div>
+                            <div class="arch-top-ornament">
+                                <i class="fa-solid fa-crown"></i>
+                            </div>
+                        </div>
+
+                        <div class="event-header">
+                            <span class="event-ordinal">03 · SACRED CEREMONY</span>
+                            <h3 class="event-name">Shaleema<br><span class="event-subname">(Reception of Barat & Rukhsati)</span></h3>
+                        </div>
+
+                        <div class="event-meta-list">
+                            <div class="meta-item">
+                                <div class="meta-icon"><i class="fa-regular fa-calendar-days"></i></div>
+                                <div class="meta-content">
+                                    <span class="meta-label">Date</span>
+                                    <span class="meta-value">Friday, 20 November 2026</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Sub-program schedule -->
+                            <div class="shaleema-timeline-schedule">
+                                <span class="schedule-title"><i class="fa-regular fa-hourglass-half"></i> Program Schedule</span>
+                                <div class="schedule-grid">
+                                    <div class="schedule-pill">
+                                        <span class="pill-time">06:30 PM</span>
+                                        <span class="pill-event">Reception of Barat</span>
+                                    </div>
+                                    <div class="schedule-pill">
+                                        <span class="pill-time">07:30 PM</span>
+                                        <span class="pill-event">Royal Dinner</span>
+                                    </div>
+                                    <div class="schedule-pill">
+                                        <span class="pill-time">09:30 PM</span>
+                                        <span class="pill-event">Rukhsati</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="meta-item">
+                                <div class="meta-icon"><i class="fa-solid fa-location-dot"></i></div>
+                                <div class="meta-content">
+                                    <span class="meta-label">Venue</span>
+                                    <span class="meta-value">De Flores Marquee, Plot # 417- 422, Behind LDA Sports Complex, Johar Town, Lahore</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SHALEEMA: R.S.V.P & LOOKING FORWARD (NAMES ONLY) -->
+                        <div class="participants-block">
+                            
+                            <!-- R.S.V.P (Names Only) -->
+                            <div class="participant-group">
+                                <span class="group-label"><i class="fa-solid fa-envelope-open-text"></i> R.S.V.P</span>
+                                <div class="flowing-names-list rsvp-names-grid">
+                                    <span>Syed Alamdar Hussain Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Syed Zeshan Ali Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Al-Haj Syed Nusrat Abbas Shamsi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Syed Muhammad Hussain Rizvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Syed Farman Ali Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Syed Akmal Hussain Naqvi Advocate</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Syed Imran Ali Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Syed Faizan Ali Naqvi</span>
+                                </div>
+                            </div>
+
+                            <!-- Looking Forward -->
+                            <div class="participant-group looking-forward-subgroup">
+                                <span class="group-label"><i class="fa-solid fa-heart"></i> Looking Forward</span>
+                                <div class="flowing-names-list looking-forward-grid">
+                                    <span>Syed Saad Hasnain Zaidi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Akhlaq Ahmed Shah (R.Yar. Khan)</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Syed Ghulam Hussain Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Syed Zawwar Hussain Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Syed Muhammad Shayan Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Syed Ghulam Masoom Naqvi</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Muhammad Raza Mazari</span>
+                                    <span class="dot-sep">✦</span>
+                                    <span>Syed Muslim Raza Zaidi</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="event-action">
+                            <a href="https://maps.google.com/?q=De+Flores+Marquee+Johar+Town+Lahore" target="_blank" rel="noopener noreferrer" class="gold-solid-btn shine-effect">
+                                <i class="fa-solid fa-diamond-turn-right"></i> View Location Map
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ROYAL AESTHETIC GALLERY (Using Custom Uploaded Royal Attire Images) -->
+    <section class="gallery-section section-padding" id="gallery">
+        <div class="section-container">
+            <div class="section-header text-center fade-in-up">
+                <span class="gold-badge">ROYAL AESTHETICS</span>
+                <h2 class="section-title">The Essence of Royalty</h2>
+                <div class="ornate-divider">
+                    <span class="line"></span>
+                    <i class="fa-solid fa-feather-pointed divider-icon"></i>
+                    <span class="line"></span>
+                </div>
+                <p class="section-subtitle">Moments woven in royal velvet, gold filigree, and eternal grace</p>
+            </div>
+
+            <div class="gallery-masonry fade-in-up">
+                <div class="gallery-item">
+                    <img src="images/bride-shaleema-velvet.jpg" alt="Bridal velvet attire with heavy gold zardozi embroidery" loading="lazy">
+                    <div class="gallery-overlay">
+                        <span>Royal Velvet & Zardozi</span>
+                        <p>Sacred Elegance in Crimson & Gold</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/groom-emerald-mehndi.jpg" alt="Groom in deep emerald green embroidered attire with marigold florals" loading="lazy">
+                    <div class="gallery-overlay">
+                        <span>Emerald Noir & Marigold</span>
+                        <p>Royal Mehndi Celebration</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/bride-mayon.jpg" alt="Bridal Mayon tradition in golden hues with floral gajras" loading="lazy">
+                    <div class="gallery-overlay">
+                        <span>Rasm-e-Mayon</span>
+                        <p>Traditional Gota, Henna & Gajras</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/groom-royal-arch.jpg" alt="Groom under historical Mughal arch in traditional kulla and shawl" loading="lazy">
+                    <div class="gallery-overlay">
+                        <span>Heritage of Lahore</span>
+                        <p>Timeless Mughal Splendor</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QURANIC BLESSING / DUA SECTION -->
+    <section class="blessing-section section-padding">
+        <div class="section-container text-center fade-in-up">
+            <div class="blessing-card">
+                <i class="fa-solid fa-quote-left quote-icon"></i>
+                <p class="blessing-arabic">
+                    وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً
+                </p>
+                <p class="blessing-translation">
+                    "And among His signs is that He created for you mates from among yourselves, that you may dwell in tranquility with them, and He has put love and mercy between your hearts."
+                </p>
+                <span class="blessing-reference">— Surah Ar-Rum (30:21) —</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CLEAN ELEGANT FOOTER -->
+    <footer class="luxury-footer">
+        <div class="footer-inner text-center fade-in-up">
+            <div class="footer-monogram">
+                <div class="monogram-frame">
+                    <span>PB & NZ</span>
+                </div>
+            </div>
+            <h3 class="footer-heading">Looking forward to celebrating with you!</h3>
+            <p class="footer-couple-names">Syeda Payam Batool & Syed Naveed Shoukat</p>
+            <div class="footer-divider">
+                <span class="diamond"></span>
+                <span class="line"></span>
+                <span class="diamond"></span>
+            </div>
+            <p class="footer-city">Lahore, Pakistan · November 2026</p>
+            <p class="footer-copyright">Emerald Noir Edition · With prayers and warmest wishes</p>
+        </div>
+    </footer>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="script.js"></script>
+</body>
+</html>
