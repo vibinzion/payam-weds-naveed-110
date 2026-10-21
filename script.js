@@ -8,129 +8,64 @@ document.addEventListener('DOMContentLoaded', () => {
     initCountdown();
     initScratchCard();
     initScrollAnimations();
-    initAudioController();
+    initAudioUnlocker();
 });
 
 /* ==========================================================================
-   1. BACKGROUND MUSIC CONTROLLER (NATIVE AUDIO + YOUTUBE FALLBACK)
+   1. AGGRESSIVE AUDIO UNLOCKER (OPTIMIZED FOR SAFARI / IOS / MOBILE)
    ========================================================================== */
-let ytPlayer = null;
-let isAudioPlaying = false;
-let userHasInteracted = false;
+const unlockEvents = ['touchstart', 'touchend', 'mousedown', 'click', 'scroll'];
 
-// Direct postMessage helper for the YouTube iframe fallback
-function sendYtCommand(func, args) {
-    const frame = document.getElementById('yt-audio-frame');
-    if (frame && frame.contentWindow) {
-        try {
-            frame.contentWindow.postMessage(JSON.stringify({
-                event: 'command',
-                func: func,
-                args: args || []
-            }), '*');
-        } catch (e) {
-            console.warn('postMessage command error:', e);
-        }
+function handleUnlockInteraction() {
+    const audio = document.getElementById('wedding-audio');
+    if (!audio) return;
+
+    audio.volume = 0.85;
+    const playPromise = audio.play();
+
+    if (playPromise !== undefined) {
+        playPromise
+            .then(() => {
+                // Audio successfully playing — immediately remove all unlock listeners
+                removeUnlockListeners();
+                console.log('Wedding audio successfully unlocked and playing.');
+            })
+            .catch(() => {
+                // Silently ignore rejection errors until valid gesture occurs
+            });
     }
 }
 
-window.onYouTubeIframeAPIReady = function() {
-    try {
-        ytPlayer = new YT.Player('yt-audio-frame', {
-            events: {
-                onReady: () => {
-                    if (userHasInteracted && !isAudioPlaying) {
-                        triggerYouTubeAudio();
-                    }
-                },
-                onStateChange: (event) => {
-                    if (event.data === YT.PlayerState.PLAYING) {
-                        isAudioPlaying = true;
-                        cleanupGestureListeners();
-                    }
-                }
-            }
-        });
-    } catch (e) {
-        console.warn('YT.Player note:', e);
-    }
-};
+function removeUnlockListeners() {
+    unlockEvents.forEach(eventType => {
+        document.removeEventListener(eventType, handleUnlockInteraction, { capture: true });
+        window.removeEventListener(eventType, handleUnlockInteraction, { capture: true });
+    });
+}
 
-const gestureEvents = ['click', 'touchstart', 'touchend', 'pointerdown', 'scroll', 'wheel', 'keydown', 'mousemove'];
+function initAudioUnlocker() {
+    // 1. Add capturing event listeners to document and window
+    // { capture: true } intercepts interaction BEFORE any child element can stop it
+    unlockEvents.forEach(eventType => {
+        document.addEventListener(eventType, handleUnlockInteraction, { capture: true, passive: true });
+        window.addEventListener(eventType, handleUnlockInteraction, { capture: true, passive: true });
+    });
 
-function initAudioController() {
-    const nativeAudio = document.getElementById('wedding-audio');
-    if (nativeAudio) {
-        nativeAudio.volume = 0.85;
-        // Attempt immediate playback (works in desktop or pre-granted environments)
-        const initialPlay = nativeAudio.play();
+    // 2. Also attempt an initial play immediately in case autoplay is permitted
+    const audio = document.getElementById('wedding-audio');
+    if (audio) {
+        audio.volume = 0.85;
+        const initialPlay = audio.play();
         if (initialPlay !== undefined) {
-            initialPlay.then(() => {
-                isAudioPlaying = true;
-                console.log('Background music auto-started successfully.');
-            }).catch(() => {
-                console.log('Waiting for first user interaction to play music.');
-            });
+            initialPlay
+                .then(() => {
+                    removeUnlockListeners();
+                })
+                .catch(() => {
+                    // Silently ignore; waiting for unlockEvents interaction
+                });
         }
     }
-
-    // Attach listeners for first user gesture
-    gestureEvents.forEach(eventType => {
-        window.addEventListener(eventType, onFirstInteraction, { passive: true });
-        document.addEventListener(eventType, onFirstInteraction, { passive: true });
-    });
-}
-
-function onFirstInteraction(e) {
-    userHasInteracted = true;
-    playWeddingAudio();
-}
-
-function playWeddingAudio() {
-    if (isAudioPlaying) return;
-
-    // 1. Play native HTML5 audio file (most reliable across all browsers & devices)
-    const nativeAudio = document.getElementById('wedding-audio');
-    if (nativeAudio) {
-        nativeAudio.volume = 0.85;
-        const playPromise = nativeAudio.play();
-        if (playPromise !== undefined) {
-            playPromise.then(() => {
-                isAudioPlaying = true;
-                cleanupGestureListeners();
-                console.log('Native wedding audio playing smoothly.');
-            }).catch(err => {
-                console.warn('Native playback error, trying YouTube fallback:', err);
-                triggerYouTubeAudio();
-            });
-        } else {
-            isAudioPlaying = true;
-            cleanupGestureListeners();
-        }
-    } else {
-        triggerYouTubeAudio();
-    }
-}
-
-function triggerYouTubeAudio() {
-    sendYtCommand('playVideo');
-    sendYtCommand('unMute');
-    sendYtCommand('setVolume', [95]);
-
-    if (ytPlayer && typeof ytPlayer.unMute === 'function') {
-        try {
-            ytPlayer.unMute();
-            ytPlayer.setVolume(95);
-            ytPlayer.playVideo();
-        } catch (err) {}
-    }
-}
-
-function cleanupGestureListeners() {
-    gestureEvents.forEach(eventType => {
-        window.removeEventListener(eventType, onFirstInteraction);
-        document.removeEventListener(eventType, onFirstInteraction);
-    });
 }
 
 /* ==========================================================================
@@ -230,11 +165,10 @@ function initScratchCard() {
         try {
             const w = canvas.width;
             const h = canvas.height;
-            // Downsample sampling for speed
             const imgData = ctx.getImageData(0, 0, w, h);
             const data = imgData.data;
             let clearedPixels = 0;
-            const step = 32; // sampling step
+            const step = 32;
             const totalSampled = (w * h) / step;
 
             for (let i = 3; i < data.length; i += step * 4) {
@@ -269,7 +203,7 @@ function initScratchCard() {
     // Mouse events
     canvas.addEventListener('mousedown', (e) => {
         isDrawing = true;
-        playWeddingAudio();
+        handleUnlockInteraction();
         scratch(e);
     });
     window.addEventListener('mouseup', () => { isDrawing = false; });
@@ -278,7 +212,7 @@ function initScratchCard() {
     // Touch events for mobile
     canvas.addEventListener('touchstart', (e) => {
         isDrawing = true;
-        playWeddingAudio();
+        handleUnlockInteraction();
         scratch(e);
         e.preventDefault();
     }, { passive: false });
@@ -292,7 +226,7 @@ function initScratchCard() {
     // Fallback reveal button
     if (revealBtn) {
         revealBtn.addEventListener('click', () => {
-            playWeddingAudio();
+            handleUnlockInteraction();
             revealEntireDate();
         });
     }
@@ -303,7 +237,6 @@ function initScratchCard() {
    Target: Friday, 20 November 2026, 06:30 PM (Asia/Karachi UTC+5)
    ========================================================================== */
 function initCountdown() {
-    // 2026-11-20T18:30:00+05:00
     const targetTime = new Date('2026-11-20T18:30:00+05:00').getTime();
 
     const daysEl = document.getElementById('days');
