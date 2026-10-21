@@ -4,68 +4,39 @@
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
+    initWelcomeOverlay();
     initAmbientParticles();
     initCountdown();
     initScratchCard();
     initScrollAnimations();
-    initAudioUnlocker();
 });
 
 /* ==========================================================================
-   1. AGGRESSIVE AUDIO UNLOCKER (OPTIMIZED FOR SAFARI / IOS / MOBILE)
+   1. WELCOME OVERLAY & BACKGROUND MUSIC UNLOCKER
    ========================================================================== */
-const unlockEvents = ['touchstart', 'touchend', 'mousedown', 'click', 'scroll'];
-
-function handleUnlockInteraction() {
+function initWelcomeOverlay() {
+    const overlay = document.getElementById('welcomeOverlay');
     const audio = document.getElementById('wedding-audio');
-    if (!audio) return;
 
-    audio.volume = 0.85;
-    const playPromise = audio.play();
+    if (!overlay) return;
 
-    if (playPromise !== undefined) {
-        playPromise
-            .then(() => {
-                // Audio successfully playing — immediately remove all unlock listeners
-                removeUnlockListeners();
-                console.log('Wedding audio successfully unlocked and playing.');
-            })
-            .catch(() => {
-                // Silently ignore rejection errors until valid gesture occurs
+    overlay.addEventListener('click', () => {
+        // 1. Play background music on explicit user tap
+        if (audio) {
+            audio.volume = 0.85;
+            audio.play().catch(err => {
+                console.log('Audio playback note:', err);
             });
-    }
-}
-
-function removeUnlockListeners() {
-    unlockEvents.forEach(eventType => {
-        document.removeEventListener(eventType, handleUnlockInteraction, { capture: true });
-        window.removeEventListener(eventType, handleUnlockInteraction, { capture: true });
-    });
-}
-
-function initAudioUnlocker() {
-    // 1. Add capturing event listeners to document and window
-    // { capture: true } intercepts interaction BEFORE any child element can stop it
-    unlockEvents.forEach(eventType => {
-        document.addEventListener(eventType, handleUnlockInteraction, { capture: true, passive: true });
-        window.addEventListener(eventType, handleUnlockInteraction, { capture: true, passive: true });
-    });
-
-    // 2. Also attempt an initial play immediately in case autoplay is permitted
-    const audio = document.getElementById('wedding-audio');
-    if (audio) {
-        audio.volume = 0.85;
-        const initialPlay = audio.play();
-        if (initialPlay !== undefined) {
-            initialPlay
-                .then(() => {
-                    removeUnlockListeners();
-                })
-                .catch(() => {
-                    // Silently ignore; waiting for unlockEvents interaction
-                });
         }
-    }
+
+        // 2. Smoothly fade out overlay to reveal invitation
+        overlay.classList.add('fade-out');
+
+        // 3. Remove overlay from DOM flow once 1.5s transition completes
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 1500);
+    }, { once: true });
 }
 
 /* ==========================================================================
@@ -92,7 +63,6 @@ function initScratchCard() {
         const w = canvas.width;
         const h = canvas.height;
         
-        // Luxury metallic gold gradient
         const grad = ctx.createLinearGradient(0, 0, w, h);
         grad.addColorStop(0, '#e8c872');
         grad.addColorStop(0.25, '#d4af37');
@@ -104,7 +74,6 @@ function initScratchCard() {
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, w, h);
 
-        // Gold dust glitter sparkles texture
         for (let i = 0; i < 400; i++) {
             const px = Math.random() * w;
             const py = Math.random() * h;
@@ -115,12 +84,10 @@ function initScratchCard() {
             ctx.fill();
         }
 
-        // Inner ornate border
         ctx.strokeStyle = 'rgba(74, 51, 10, 0.6)';
         ctx.lineWidth = 2;
         ctx.strokeRect(10, 10, w - 20, h - 20);
 
-        // Card Callout Text
         ctx.fillStyle = '#2d2006';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -203,7 +170,6 @@ function initScratchCard() {
     // Mouse events
     canvas.addEventListener('mousedown', (e) => {
         isDrawing = true;
-        handleUnlockInteraction();
         scratch(e);
     });
     window.addEventListener('mouseup', () => { isDrawing = false; });
@@ -212,7 +178,6 @@ function initScratchCard() {
     // Touch events for mobile
     canvas.addEventListener('touchstart', (e) => {
         isDrawing = true;
-        handleUnlockInteraction();
         scratch(e);
         e.preventDefault();
     }, { passive: false });
@@ -226,7 +191,6 @@ function initScratchCard() {
     // Fallback reveal button
     if (revealBtn) {
         revealBtn.addEventListener('click', () => {
-            handleUnlockInteraction();
             revealEntireDate();
         });
     }
