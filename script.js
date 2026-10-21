@@ -12,105 +12,109 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================================================
-   1. BACKGROUND MUSIC PLAYER (YOUTUBE IFRAME API)
+   1. BACKGROUND MUSIC CONTROLLER (AUTOMATIC ON FIRST USER INTERACTION)
    ========================================================================== */
 let ytPlayer = null;
 let isAudioPlaying = false;
+let userHasInteracted = false;
+
+// Direct postMessage helper for instant, reliable control of the YouTube iframe
+function sendYtCommand(func, args) {
+    const frame = document.getElementById('yt-audio-frame');
+    if (frame && frame.contentWindow) {
+        try {
+            frame.contentWindow.postMessage(JSON.stringify({
+                event: 'command',
+                func: func,
+                args: args || []
+            }), '*');
+        } catch (e) {
+            console.warn('postMessage command error:', e);
+        }
+    }
+}
 
 window.onYouTubeIframeAPIReady = function() {
-    ytPlayer = new YT.Player('yt-audio-player', {
-        height: '0',
-        width: '0',
-        videoId: 'KqI10n5tnn8',
-        playerVars: {
-            autoplay: 0,
-            controls: 0,
-            loop: 1,
-            playlist: 'KqI10n5tnn8',
-            playsinline: 1,
-            modestbranding: 1
-        },
-        events: {
-            onReady: (event) => {
-                console.log('Wedding background music player ready.');
-                // Some browsers allow auto-play if low volume or user already interacted
-            },
-            onStateChange: (event) => {
-                if (event.data === YT.PlayerState.PLAYING) {
-                    setAudioUIState(true);
-                } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
-                    setAudioUIState(false);
+    try {
+        ytPlayer = new YT.Player('yt-audio-frame', {
+            events: {
+                onReady: (event) => {
+                    console.log('YouTube iframe API ready.');
+                    if (userHasInteracted) {
+                        playWeddingAudio();
+                    }
+                },
+                onStateChange: (event) => {
+                    if (event.data === YT.PlayerState.PLAYING) {
+                        isAudioPlaying = true;
+                        cleanupGestureListeners();
+                    }
                 }
             }
-        }
-    });
+        });
+    } catch (e) {
+        console.warn('YT.Player initialization note:', e);
+    }
 };
 
+const gestureEvents = ['click', 'touchstart', 'touchend', 'pointerdown', 'scroll', 'wheel', 'keydown', 'mousemove'];
+
 function initAudioController() {
-    const musicBtn = document.getElementById('musicToggleBtn');
-    if (!musicBtn) return;
+    // Tell YouTube iframe to listen for messages
+    const frame = document.getElementById('yt-audio-frame');
+    if (frame && frame.contentWindow) {
+        frame.addEventListener('load', () => {
+            frame.contentWindow.postMessage('{"event":"listening"}', '*');
+        });
+    }
 
-    musicBtn.addEventListener('click', () => {
-        toggleWeddingMusic();
+    // Attach listeners for any initial user interaction
+    gestureEvents.forEach(eventType => {
+        window.addEventListener(eventType, onFirstInteraction, { passive: true });
+        document.addEventListener(eventType, onFirstInteraction, { passive: true });
     });
-
-    // Also auto-enable music on very first user interaction anywhere on page (if paused)
-    const handleFirstGesture = () => {
-        if (!isAudioPlaying && ytPlayer && typeof ytPlayer.playVideo === 'function') {
-            try {
-                ytPlayer.playVideo();
-                ytPlayer.unMute();
-                ytPlayer.setVolume(75);
-                setAudioUIState(true);
-            } catch (e) {
-                console.log('Audio gesture attempt:', e);
-            }
-        }
-        window.removeEventListener('click', handleFirstGesture);
-        window.removeEventListener('touchstart', handleFirstGesture);
-    };
-
-    window.addEventListener('click', handleFirstGesture, { once: true });
-    window.addEventListener('touchstart', handleFirstGesture, { once: true });
 }
 
-function toggleWeddingMusic() {
-    const musicBtn = document.getElementById('musicToggleBtn');
-    if (!ytPlayer || typeof ytPlayer.getPlayerState !== 'function') {
-        // Player still initializing, toggle visual state
-        setAudioUIState(!isAudioPlaying);
-        return;
-    }
+function onFirstInteraction(e) {
+    userHasInteracted = true;
+    playWeddingAudio();
+}
 
-    try {
-        const playerState = ytPlayer.getPlayerState();
-        if (playerState === YT.PlayerState.PLAYING) {
-            ytPlayer.pauseVideo();
-            setAudioUIState(false);
-        } else {
-            ytPlayer.playVideo();
+function playWeddingAudio() {
+    // 1. Send direct postMessage commands to the iframe
+    sendYtCommand('playVideo');
+    sendYtCommand('unMute');
+    sendYtCommand('setVolume', [95]);
+
+    // 2. Also call YT.Player API if available
+    if (ytPlayer && typeof ytPlayer.unMute === 'function') {
+        try {
             ytPlayer.unMute();
-            ytPlayer.setVolume(75);
-            setAudioUIState(true);
+            ytPlayer.setVolume(95);
+            ytPlayer.playVideo();
+        } catch (err) {
+            console.warn('YT.Player method call:', err);
         }
-    } catch (err) {
-        console.error('Error toggling audio:', err);
     }
+
+    // Attempt audio unlock again briefly in case of media buffer delay
+    setTimeout(() => {
+        sendYtCommand('playVideo');
+        sendYtCommand('unMute');
+        sendYtCommand('setVolume', [95]);
+    }, 400);
+
+    setTimeout(() => {
+        sendYtCommand('playVideo');
+        sendYtCommand('unMute');
+    }, 1200);
 }
 
-function setAudioUIState(playing) {
-    isAudioPlaying = playing;
-    const musicBtn = document.getElementById('musicToggleBtn');
-    const label = document.getElementById('musicPillLabel');
-    if (!musicBtn || !label) return;
-
-    if (playing) {
-        musicBtn.classList.add('playing');
-        label.textContent = 'Pause Music';
-    } else {
-        musicBtn.classList.remove('playing');
-        label.textContent = 'Play Music';
-    }
+function cleanupGestureListeners() {
+    gestureEvents.forEach(eventType => {
+        window.removeEventListener(eventType, onFirstInteraction);
+        document.removeEventListener(eventType, onFirstInteraction);
+    });
 }
 
 /* ==========================================================================
@@ -249,6 +253,7 @@ function initScratchCard() {
     // Mouse events
     canvas.addEventListener('mousedown', (e) => {
         isDrawing = true;
+        playWeddingAudio();
         scratch(e);
     });
     window.addEventListener('mouseup', () => { isDrawing = false; });
@@ -257,6 +262,7 @@ function initScratchCard() {
     // Touch events for mobile
     canvas.addEventListener('touchstart', (e) => {
         isDrawing = true;
+        playWeddingAudio();
         scratch(e);
         e.preventDefault();
     }, { passive: false });
@@ -269,7 +275,10 @@ function initScratchCard() {
 
     // Fallback reveal button
     if (revealBtn) {
-        revealBtn.addEventListener('click', revealEntireDate);
+        revealBtn.addEventListener('click', () => {
+            playWeddingAudio();
+            revealEntireDate();
+        });
     }
 }
 
