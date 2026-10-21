@@ -16,9 +16,20 @@
     <!-- Subtle Golden Sparkle Canvas Background -->
     <canvas id="ambient-canvas"></canvas>
 
-    <!-- Hidden YouTube Audio Player -->
-    <div id="yt-player-container" style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden;">
-        <div id="yt-audio-player"></div>
+    <!-- Native High-Fidelity Audio Player -->
+    <audio id="wedding-audio" loop preload="auto" src="music/wedding-music.mp3"></audio>
+
+    <!-- Discreet Background Audio Player (YouTube Backup) -->
+    <div id="yt-player-container" style="position: fixed; bottom: 0; right: 0; width: 200px; height: 200px; opacity: 0.001; pointer-events: none; z-index: -9999; overflow: hidden;">
+        <iframe id="yt-audio-frame"
+                width="200"
+                height="200"
+                src="https://www.youtube.com/embed/KqI10n5tnn8?enablejsapi=1&autoplay=1&mute=1&loop=1&playlist=KqI10n5tnn8&playsinline=1&controls=0&showinfo=0&rel=0"
+                title="Wedding Background Music"
+                frameborder="0"
+                allow="autoplay; encrypted-media"
+                allowfullscreen>
+        </iframe>
     </div>
 
     <!-- Floating Music Toggle Controller -->
