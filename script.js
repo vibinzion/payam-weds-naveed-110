@@ -12,13 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================================================
-   1. BACKGROUND MUSIC CONTROLLER (AUTOMATIC ON FIRST USER INTERACTION)
+   1. BACKGROUND MUSIC CONTROLLER (NATIVE AUDIO + YOUTUBE FALLBACK)
    ========================================================================== */
 let ytPlayer = null;
 let isAudioPlaying = false;
 let userHasInteracted = false;
 
-// Direct postMessage helper for instant, reliable control of the YouTube iframe
+// Direct postMessage helper for the YouTube iframe fallback
 function sendYtCommand(func, args) {
     const frame = document.getElementById('yt-audio-frame');
     if (frame && frame.contentWindow) {
@@ -38,10 +38,9 @@ window.onYouTubeIframeAPIReady = function() {
     try {
         ytPlayer = new YT.Player('yt-audio-frame', {
             events: {
-                onReady: (event) => {
-                    console.log('YouTube iframe API ready.');
-                    if (userHasInteracted) {
-                        playWeddingAudio();
+                onReady: () => {
+                    if (userHasInteracted && !isAudioPlaying) {
+                        triggerYouTubeAudio();
                     }
                 },
                 onStateChange: (event) => {
@@ -53,22 +52,29 @@ window.onYouTubeIframeAPIReady = function() {
             }
         });
     } catch (e) {
-        console.warn('YT.Player initialization note:', e);
+        console.warn('YT.Player note:', e);
     }
 };
 
 const gestureEvents = ['click', 'touchstart', 'touchend', 'pointerdown', 'scroll', 'wheel', 'keydown', 'mousemove'];
 
 function initAudioController() {
-    // Tell YouTube iframe to listen for messages
-    const frame = document.getElementById('yt-audio-frame');
-    if (frame && frame.contentWindow) {
-        frame.addEventListener('load', () => {
-            frame.contentWindow.postMessage('{"event":"listening"}', '*');
-        });
+    const nativeAudio = document.getElementById('wedding-audio');
+    if (nativeAudio) {
+        nativeAudio.volume = 0.85;
+        // Attempt immediate playback (works in desktop or pre-granted environments)
+        const initialPlay = nativeAudio.play();
+        if (initialPlay !== undefined) {
+            initialPlay.then(() => {
+                isAudioPlaying = true;
+                console.log('Background music auto-started successfully.');
+            }).catch(() => {
+                console.log('Waiting for first user interaction to play music.');
+            });
+        }
     }
 
-    // Attach listeners for any initial user interaction
+    // Attach listeners for first user gesture
     gestureEvents.forEach(eventType => {
         window.addEventListener(eventType, onFirstInteraction, { passive: true });
         document.addEventListener(eventType, onFirstInteraction, { passive: true });
@@ -81,33 +87,43 @@ function onFirstInteraction(e) {
 }
 
 function playWeddingAudio() {
-    // 1. Send direct postMessage commands to the iframe
+    if (isAudioPlaying) return;
+
+    // 1. Play native HTML5 audio file (most reliable across all browsers & devices)
+    const nativeAudio = document.getElementById('wedding-audio');
+    if (nativeAudio) {
+        nativeAudio.volume = 0.85;
+        const playPromise = nativeAudio.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                isAudioPlaying = true;
+                cleanupGestureListeners();
+                console.log('Native wedding audio playing smoothly.');
+            }).catch(err => {
+                console.warn('Native playback error, trying YouTube fallback:', err);
+                triggerYouTubeAudio();
+            });
+        } else {
+            isAudioPlaying = true;
+            cleanupGestureListeners();
+        }
+    } else {
+        triggerYouTubeAudio();
+    }
+}
+
+function triggerYouTubeAudio() {
     sendYtCommand('playVideo');
     sendYtCommand('unMute');
     sendYtCommand('setVolume', [95]);
 
-    // 2. Also call YT.Player API if available
     if (ytPlayer && typeof ytPlayer.unMute === 'function') {
         try {
             ytPlayer.unMute();
             ytPlayer.setVolume(95);
             ytPlayer.playVideo();
-        } catch (err) {
-            console.warn('YT.Player method call:', err);
-        }
+        } catch (err) {}
     }
-
-    // Attempt audio unlock again briefly in case of media buffer delay
-    setTimeout(() => {
-        sendYtCommand('playVideo');
-        sendYtCommand('unMute');
-        sendYtCommand('setVolume', [95]);
-    }, 400);
-
-    setTimeout(() => {
-        sendYtCommand('playVideo');
-        sendYtCommand('unMute');
-    }, 1200);
 }
 
 function cleanupGestureListeners() {
